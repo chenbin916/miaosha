@@ -37,10 +37,15 @@ public class Mycontroller {
     //秒杀接口
     @RequestMapping("/miaosha")
     @ResponseBody
-    public Object  getUserInfo(String goods_code,String user_id)
+    public Object  miaosha(String goods_code,String user_id)
     {
 
-        return miaoshaService.miaosha(goods_code,user_id);
+
+
+            boolean res=miaoshaService.miaosha(goods_code,user_id);
+
+            System.out.println("秒杀结果："+res);
+        return res;
 
     }
 }

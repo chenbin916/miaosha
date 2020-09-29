@@ -5,6 +5,11 @@ import java.util.Map;
 
 import com.bin.study.multhread.miaosha.dao.RecordsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
 import com.bin.study.multhread.miaosha.dao.MiaoshaDAO;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,7 +37,22 @@ public class MiaoshaService {
     }
 
 
-    public Boolean miaosha(String goods_code,String user_id) {
+    public Boolean miaosha(String goods_code,String user_id)
+    {
+
+       boolean operaFre= stringRedisTemplate.execute(new RedisCallback<Boolean>() {
+
+           @Override
+           public Boolean doInRedis(RedisConnection redisConnection) throws DataAccessException {
+               Boolean res=redisConnection.set(user_id.getBytes(), "chen".getBytes(),Expiration.milliseconds(10000L), RedisStringCommands.SetOption.SET_IF_ABSENT);
+               return res;
+           }
+       });
+
+       if(!operaFre) {
+           System.out.println("你操作台频繁了");
+           return false;
+       }
     boolean result = miaoshaDAO.updateMiaosha(goods_code);
     if(!result) return false;
 
