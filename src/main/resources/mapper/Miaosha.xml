@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bin.study.multhread.miaosha.dao.MiaoshaDAO">
+    <select id="GetUserbyId" resultType="map" parameterType="int">
+        select * from test where id=#{id}
+    </select>
+
+    <update id="updateMiaosha" parameterType="java.lang.String" >
+        update tb_miaosha set goods_nums=goods_nums -1 where goods_code =#{goods_code}
+    </update>
+    
+
+</mapper>
