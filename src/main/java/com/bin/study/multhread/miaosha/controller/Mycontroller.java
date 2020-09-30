@@ -40,10 +40,10 @@ public class Mycontroller {
     public Object  miaosha(String goods_code,String user_id)
     {
 
-
-
-            boolean res=miaoshaService.miaosha(goods_code,user_id);
-
+        boolean res=false;
+              for(int i=0;i<201;i++) {
+                   res = miaoshaService.miaosha(goods_code, "tommy"+i);
+              }
             System.out.println("秒杀结果："+res);
         return res;
 

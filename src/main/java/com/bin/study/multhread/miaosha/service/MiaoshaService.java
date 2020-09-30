@@ -28,8 +28,14 @@ public class MiaoshaService {
 
 
 @PostConstruct
-    public void init(){
-      System.out.println("初始化完毕！");
+    public void init()
+   {
+       System.out.println("初始化令牌，令牌长度："+stringRedisTemplate.opsForList().size("tokenPool"));
+       for(int i=0;i<20;i++)
+           stringRedisTemplate.opsForList().leftPush("tokenPool",String.valueOf(i));
+      System.out.println("令牌初始化完毕！");
+       System.out.println("令牌长度："+stringRedisTemplate.opsForList().size("tokenPool"));
+
     }
 
     public List<Map> test(Integer id) {
@@ -44,15 +50,26 @@ public class MiaoshaService {
 
            @Override
            public Boolean doInRedis(RedisConnection redisConnection) throws DataAccessException {
+               //不用setnx 和setex,而用set组合，因为一个命令的性能比两个命令高一倍。
                Boolean res=redisConnection.set(user_id.getBytes(), "chen".getBytes(),Expiration.milliseconds(10000L), RedisStringCommands.SetOption.SET_IF_ABSENT);
                return res;
            }
        });
 
        if(!operaFre) {
-           System.out.println("你操作台频繁了");
+           System.out.println(user_id+"，你操作台频繁了");
            return false;
        }
+
+     //令牌池
+        System.out.println("令牌长度："+stringRedisTemplate.opsForList().size("tokenPool"));
+     String token= stringRedisTemplate.opsForList().rightPop("tokenPool");
+        System.out.println(user_id+"，抢占令牌成功："+token);
+       if(token==null ||"".equals(token)) {
+           System.out.println(user_id+"，抢占令牌失败！");
+           return false;
+       }
+
     boolean result = miaoshaDAO.updateMiaosha(goods_code);
     if(!result) return false;
 

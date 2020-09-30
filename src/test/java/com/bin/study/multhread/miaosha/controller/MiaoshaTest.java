@@ -6,8 +6,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.CountDownLatch;
@@ -15,8 +18,8 @@ import java.util.concurrent.CountDownLatch;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = MyApplication.class)
-class MycontrollerTest {
+@SpringBootTest(classes = {MyApplication.class})
+class MiaoshaTest {
 
     long timed =0l;
 
@@ -36,7 +39,7 @@ class MycontrollerTest {
     @Test
     void miaosha_Stree_Test() {
        //模拟请求数量
-        final int threadNum=23;
+        final int threadNum=200;
         //倒计数器 ，用于模拟高并发信号枪机制）
         CountDownLatch cdl =new CountDownLatch(threadNum);
        // Thread [] threads=new Thread[threadNum];
@@ -46,7 +49,7 @@ class MycontrollerTest {
         {
 
 
-
+            String userIds = userid+i;
             thread =new Thread(()->{
                 cdl.countDown();
                 try {
@@ -57,14 +60,13 @@ class MycontrollerTest {
                 }
 
                 ;
-                System.out.println("invoke..222..."+miaoshaService.miaosha("bike",(userid)));
+                System.out.println(userIds +"开始秒杀："+miaoshaService.miaosha("bike",userIds));
 
 
             });
-          //  threads[i]=thread;
             thread.start();;
         }
 
-        System.out.println("test------over");
+        System.out.println("秒杀活动结束！------over");
     }
 }
