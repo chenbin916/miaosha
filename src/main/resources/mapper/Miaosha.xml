@@ -7,7 +7,7 @@
     </select>
 
     <update id="updateMiaosha" parameterType="java.lang.String" >
-        update tb_miaosha set goods_nums=goods_nums -1 where goods_code =#{goods_code}
+        update tb_miaosha set goods_nums=goods_nums -1 where goods_code =#{goods_code} and goods_nums>0
     </update>
     
 
